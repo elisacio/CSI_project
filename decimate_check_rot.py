@@ -15,13 +15,18 @@ from encoding import encoding, encode
 from compute_wn import compute_wn
 
 def save_as_obj(path, model):
+    dict_ecart = dict()
+    ecart = 0
     with open(path, "w") as f:
         for (vertex_index, v) in enumerate(model.vertices):
             if vertex_index not in model.deleted_vertices:
                 f.write(f"v {v[0]} {v[1]} {v[2]}\n")
+                dict_ecart[vertex_index] = ecart
+            else :
+                ecart += 1
         for (face_index, face) in enumerate(model.faces):
             if face_index not in model.deleted_faces:
-                f.write(f"f {face.a+1} {face.b+1} {face.c+1}\n")
+                f.write(f"f {face.a+1 - dict_ecart[face.a]} {face.b+1 - dict_ecart[face.b]} {face.c+1 - dict_ecart[face.c]}\n")
 
 class OutputDel(obja.Output):
     def delete_face(self, index, face):
@@ -121,7 +126,7 @@ class Decimater(obja.Model):
             else:
                 output_model.delete_face(index, value)
 
-        original_file = "example/suzanne.obj"
+        original_file = "example/bunny.obj"
 
         encoded_data_size = sum(len(e) for e in encoded_colorations) + sum(len(e) for e in encoded_wns)
         size_original = os.path.getsize(original_file)
