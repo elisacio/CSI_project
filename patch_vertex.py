@@ -14,10 +14,7 @@ def couple_index_face(face, deleted_index):
     return result
 
 def ordonnement(faces, faces_voisines, deleted_index):
-    # print(faces_voisines)
     couples = [couple_index_face(faces[face_ind], deleted_index) for face_ind in faces_voisines]
-    # print(couples)
-    # print(verifier_ferme(couples))
     if not verifier_ferme(couples) or len(couples) <= 2 or len(faces_voisines) <= 4 :
         return []
     start = couples[0][1]

@@ -225,7 +225,7 @@ class RequestHandler(SimpleHTTPRequestHandler):
             return (None, None)
 
 
-def get_server(port=8000, next_attempts=0, serve_path=None):
+def get_server(port=8001, next_attempts=0, serve_path=None):
     Handler = RequestHandler
     if serve_path:
         Handler.serve_path = serve_path
@@ -245,7 +245,7 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
 
-    PORT = 8000
+    PORT = 8001
     if len(args) > 0:
         PORT = int(args[-1])
     serve_path = DATA_DIR

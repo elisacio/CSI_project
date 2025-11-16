@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import obja
+import os
 import numpy as np
 import sys
 import networkx as nx
@@ -10,6 +11,15 @@ import zigzag_coloration
 import utils
 from graphe import get_independent_set
 from getBFT_triangles import getBFT
+from encoding import encoding, encode
+from compute_wn import compute_wn
+
+def save_as_obj(path, vertices, faces):
+    with open(path, "w") as f:
+        for v in vertices:
+            f.write(f"v {v[0]} {v[1]} {v[2]}\n")
+        for face in faces:
+            f.write(f"f {face.a+1} {face.b+1} {face.c+1}\n")
 
 class OutputDel(obja.Output):
     def delete_face(self, index, face):
@@ -35,6 +45,9 @@ class Decimater(obja.Model):
         """
         operations = []
         vecteurs_couleurs = []
+        encoded_wns = []
+        encoded_colorations = []
+
         print('Taille faces set initial: ', len(self.faces))
 
         for i in range(5):
@@ -66,8 +79,16 @@ class Decimater(obja.Model):
                     vecteur += str(new_colors[index])
                 else :
                     vecteur += "0"
-            print(vecteur)
+            #print(vecteur)
             vecteurs_couleurs.append(vecteur)
+
+            # Encodage 
+            w_n = compute_wn(self, patchs, indices_a_supprimer)
+            w_n = [tuple(np.round(w * 1000).astype(int)) for w in w_n]
+            w_n_encoded, coloration_encoded = encoding(w_n, vecteur)
+
+            encoded_wns.append(w_n_encoded)
+            encoded_colorations.append(coloration_encoded)
 
             # add new faces to operations ('delete', face_index, face)
             for i in range(len(formated_faces)):
@@ -75,6 +96,9 @@ class Decimater(obja.Model):
 
             # ajout operation in operations
             operations = operations + operation
+
+        # Enregistrement du modèle avec le plus bas niveau de détail
+        save_as_obj("model_low.obj", self.vertices, self.faces)
 
         # Iterate through the vertex
         for (vertex_index, vertex) in enumerate(self.vertices):
@@ -108,15 +132,24 @@ class Decimater(obja.Model):
             else:
                 output_model.delete_face(index, value)
 
+        original_file = "example/suzanne.obj"
+
+        encoded_data_size = sum(len(e) for e in encoded_colorations) + sum(len(e) for e in encoded_wns)
+        size_original = os.path.getsize(original_file)
+        compression_ratio = 100 * (1 - encoded_data_size / size_original)
+        print(f"Taux de compression basé sur encodage : {compression_ratio:.2f} %")
+            
+        return encoded_colorations, encoded_wns
+
 def main():
     """
     Runs the program on the model given as parameter.
     """
     np.seterr(invalid = 'raise')
     model = Decimater()
-    model.parse_file('example/bunny.obj')
+    model.parse_file('example/suzanne.obj')
 
-    with open('example/bunny_prolonge.obja', 'w') as output:
+    with open('example/suzanne_prolonge.obja', 'w') as output:
         model.contract(output)
 
 

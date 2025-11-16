@@ -38,6 +38,8 @@ def getBFT(faces):
     Take as input the faces of a mesh
     Return the breadth first traversal of the triangles
     """
+def getBFT(faces):
+
     dual_vertices = [i for i in range(len(faces))]
     dual_edges = getEdges(faces, dual_vertices)
 
@@ -46,16 +48,43 @@ def getBFT(faces):
     G.add_edges_from(dual_edges)
     G = G.to_undirected()
 
+    if len(faces) == 0:
+        return []
+
+    if 0 not in G.nodes:
+        return faces[:]   
+    
     dict_successors = dict(nx.bfs_successors(G, source=0))
     keys = dict_successors.keys()
 
     order_triangle = []
     nexts = [0]
-    while len(order_triangle) != len(faces) :
-        order_triangle.append(faces[nexts[0]])
-        if nexts[0] in keys :
-            for ind in dict_successors[nexts[0]] :
-                nexts.append(ind)
+    visited = set()  
+
+    while len(order_triangle) != len(faces):
+
+        if len(nexts) == 0:
+            for i in range(len(faces)):
+                if i not in visited:
+                    nexts.append(i)
+                    break
+
+        current = nexts[0]
         del nexts[0]
 
+        if current < 0 or current >= len(faces):
+            continue
+
+        if current in visited:
+            continue
+        visited.add(current)
+
+        order_triangle.append(faces[current])
+
+        if current in keys:
+            for ind in dict_successors[current]:
+                if ind not in visited:
+                    nexts.append(ind)
+
     return order_triangle
+
