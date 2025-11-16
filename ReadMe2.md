@@ -16,14 +16,14 @@
 
 ### File encoding.py (Elisa)
 - Code for encoding the displacements and the mesh's coloration
-- args: w_n the list of the displacements and coloration the list of the triangles colors
-- returns: the encoded vectors
+- args: w_n(list of floats) the list of the displacements  and coloration(string) the list of the triangles colors 
+- returns: the encoded vectors(string)
 
 ### Files huffman.py and lz_encoder.py (Elisa)
-- Code for encoding with huffman and lz_encoder
+- Code for encoding with huffman and lz
 
 ### File test_encoding.py (Elisa)
-- Code for testing the huffman and LZ encoders
+- Code for testing the huffman and LZ encoders + the encoding function
 
 ## File patch_vertex.py (Damien)
 - Code for determining which patches need to be created and theirs associated operations ( delete a face, delete a vertex ) 
