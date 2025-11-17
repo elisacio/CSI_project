@@ -1,8 +1,25 @@
 import obja
-import numpy as np
+import numpy as np # type: ignore
 import sys
-import networkx as nx
+import networkx as nx # type: ignore
 from utils import shape_centroid
+
+def normal_triangle(vertices, face_vert):
+    coor = [vertices[i] for i in face_vert]
+    N = np.cross(coor[1] - coor[0], coor[2] - coor[0])
+    return N
+
+def mean_normals(vertices, faces_vertices):
+    normals = [normal_triangle(vertices, faces_vertices) for i in faces_vertices]
+    mean = np.mean(normals)
+    mean_norm = mean/np.norm(mean)
+    return mean_norm
+
+def compare_norm(vertices, initial_normal, face_vert):
+    normal_face = normal_triangle(vertices, face_vert)
+    normal_face_norm = normal_face/np.norm(normal_face)
+    dot_prod = np.dot(normal_face_norm, initial_normal)
+    return face_vert if dot_prod >=0 else face_vert[::-1]
 
 def newell(vertices_set, vertices_index_sorted):
     normal = [0.0]*3
@@ -27,7 +44,7 @@ def check_rotation(vertices_set, vertices_index_sorted, centroid_shape):
     # print('normal: ', normal)
     dot_prod = np.dot(normal, centers_vector)
     # print('dot_product: ', dot_prod)
-    return vertices_index_sorted if dot_prod < 0 else vertices_index_sorted[::-1]
+    return True if dot_prod<0 else False# vertices_index_sorted if dot_prod < 0 else vertices_index_sorted[::-1]
 
 
 def main():

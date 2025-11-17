@@ -1,13 +1,21 @@
 #!/usr/bin/env python
 
 import obja
-import numpy as np
+import numpy as np # type: ignore
 import sys
-import networkx as nx
+import networkx as nx # type: ignore
 import unittest
 
 def flatten(xss):
     return [x for xs in xss for x in xs]
+
+def rotate_until_first(lst, target):
+    try:
+        i = lst.index(target)
+    except ValueError:
+        return lst
+
+    return lst[i:] + lst[:i]
 
 def shape_centroid(vertices_set):
     # Return Centroid of the 3D shape which is the mean of each value

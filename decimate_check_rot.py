@@ -2,9 +2,9 @@
 
 import obja
 import os
-import numpy as np
+import numpy as np # type: ignore
 import sys
-import networkx as nx
+import networkx as nx # type: ignore
 import check_rotation
 import patch_vertex
 import zigzag_coloration
@@ -54,6 +54,20 @@ class Decimater(obja.Model):
         vecteurs_couleurs = []
         encoded_wns = []
         encoded_colorations = []
+        sens_counterclock = False
+
+        # find counterclock or clock wise
+        centroid_shape = utils.shape_centroid(self.vertices)
+        ok = [check_rotation.check_rotation(self.vertices, [face.a, face.b, face.c], centroid_shape) for face in self.faces]
+        if sum(ok) > len(ok) - sum(ok):
+            sens_counterclock = True
+
+        nb_true = sum(ok)
+        nb_false = len(ok) - nb_true
+        print('number counter clock wise: ', nb_true)
+        print('number clock wise: ', nb_false)
+        print('nb all: ', len(ok))
+        # raise Exception('counter or clock')
 
         print('Taille faces set initial: ', len(self.faces))
 
@@ -61,7 +75,7 @@ class Decimater(obja.Model):
             # partie networkx de badr, on a les indices des sommets à supprimer
             indexes_to_delete = get_independent_set(self) # resultat de badr
             # Enlever les faces et ressortir les patchs
-            patchs, patches_colors, formated_faces = patch_vertex.patch_vertex(self, indexes_to_delete, operations)
+            patchs, patches_colors, formated_faces = patch_vertex.patch_vertex(self, indexes_to_delete, operations, sens_counterclock)
             print('taille set deleted_faces: ', len(self.deleted_faces))
             print('taille deleted_vertices: ', len(self.deleted_vertices))
             
@@ -90,6 +104,8 @@ class Decimater(obja.Model):
 
             encoded_wns.append(w_n_encoded)
             encoded_colorations.append(coloration_encoded)
+
+            raise Exception('lol')
 
         # Enregistrement du modèle avec le plus bas niveau de détail
         save_as_obj("model_low.obj", self)
@@ -141,7 +157,7 @@ def main():
     """
     np.seterr(invalid = 'raise')
     model = Decimater()
-    model.parse_file('example/bunny.obj')
+    model.parse_file('example/suzanne.obj')
 
     with open('example/bunny_prolonge2.obja', 'w') as output:
         model.contract(output)

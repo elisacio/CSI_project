@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import numpy as np
+import numpy as np # type: ignore
 import random
 
 """
