@@ -105,7 +105,6 @@ class Decimater(obja.Model):
             encoded_wns.append(w_n_encoded)
             encoded_colorations.append(coloration_encoded)
 
-            raise Exception('lol')
 
         # Enregistrement du modèle avec le plus bas niveau de détail
         save_as_obj("model_low.obj", self)
@@ -142,7 +141,7 @@ class Decimater(obja.Model):
             else:
                 output_model.delete_face(index, value)
 
-        original_file = "example/bunny.obj"
+        original_file = "example/suzanne.obj"
 
         encoded_data_size = sum(len(e) for e in encoded_colorations) + sum(len(e) for e in encoded_wns)
         size_original = os.path.getsize(original_file)
@@ -159,7 +158,7 @@ def main():
     model = Decimater()
     model.parse_file('example/suzanne.obj')
 
-    with open('example/bunny_prolonge2.obja', 'w') as output:
+    with open('example/suzanne_prolonge2.obja', 'w') as output:
         model.contract(output)
 
 

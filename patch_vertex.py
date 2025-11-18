@@ -72,6 +72,7 @@ def patch_vertex(model, indices_a_supprimer, operations, sens_counterclock):
             # formated_faces_patch = [obja.Face(f[0], f[1], f[2]) for f in new_triangles]
             # model.faces.extend(formated_faces_patch)
             initial_normal = mean_normals(model.vertices, face_vertices)
+            # print('initial normal: ', initial_normal)
 
             # build operations
             for i in range(len(new_triangles)):
