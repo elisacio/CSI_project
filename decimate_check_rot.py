@@ -11,7 +11,7 @@ import zigzag_coloration
 import utils
 from graphe import get_independent_set
 from getBFT_triangles import getBFT
-from encoding import encoding, encode
+from encoding import encoding
 from compute_wn import compute_wn
 
 def save_as_obj(path, model):
