@@ -72,7 +72,8 @@ class Face:
         return str(self)
 
     def  __eq__(self, f2) :
-        return self.a == f2.a and self.b == f2.b and self.c == f2.c
+        list_f2 = [f2.a, f2.b, f2.c]
+        return self.a in list_f2 and self.b in list_f2 and self.c in list_f2
     
     def __hash__(self):
         return hash(str(self.a)+str(self.b)+str(self.c))

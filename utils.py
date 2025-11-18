@@ -32,3 +32,9 @@ def face_from_vertex(model, vertex_index) :
             if vertex_index in vertices :
                 liste_face.append(face_index)
     return liste_face
+
+def equal(face, triangle):
+    return face.a in triangle and face.b in triangle and face.c in triangle
+
+def face_already_exist(model, triangle):
+    return any(equal(f, triangle) for ind,f in enumerate(model.faces) if ind not in model.deleted_faces)
