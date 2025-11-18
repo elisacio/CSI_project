@@ -21,9 +21,9 @@ def verifier_ferme(couples):
     return (len(couples_bis) == len(couples)) and all(valeur == 2 for valeur in compteur.values())
 
 def ordonnement(face_vertices, faces_voisines, deleted_index):
-    print(deleted_index)
+    #print(deleted_index)
     couples = [face_vert[1:] for face_vert in face_vertices]
-    print(couples)
+    #print(couples)
     if not verifier_ferme(couples) or len(couples) <= 2 or len(faces_voisines) <= 4 :
         return []
     start = couples[0][1]
@@ -64,7 +64,7 @@ def patch_vertex(model, indices_a_supprimer, operations, sens_counterclock):
             has_zero_vector = any(all(x == 0 for x in n) for n in normals)
             # has_same_face = any(utils.face_already_exist(model, triangle) for triangle in new_triangles)
             while has_zero_vector: # or has_same_face:
-                print('has zero normal: ', has_zero_vector)
+                #print('has zero normal: ', has_zero_vector)
                 # print('has same face: ', has_same_face)
                 # print('old list vertex sorted: ', list_vertex_sorted)
                 list_vertex_sorted.append(list_vertex_sorted.pop(0))

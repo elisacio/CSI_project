@@ -72,9 +72,9 @@ class Decimater(obja.Model):
         print('Taille faces set initial: ', len(self.faces))
 
         for i in range(10):
-            # partie networkx de badr, on a les indices des sommets à supprimer
-            indexes_to_delete = get_independent_set(self) # resultat de badr
-            # Enlever les faces et ressortir les patchs
+            # Get indexes to remove 
+            indexes_to_delete = get_independent_set(self) 
+            # Remove faces and get patches
             patchs, patches_colors, formated_faces = patch_vertex.patch_vertex(self, indexes_to_delete, operations, sens_counterclock)
             print('taille set deleted_faces: ', len(self.deleted_faces))
             print('taille deleted_vertices: ', len(self.deleted_vertices))
@@ -83,7 +83,7 @@ class Decimater(obja.Model):
             print('Taille faces set after adding new ones: ', len(self.faces))
             print(f"Nombre d'opérations {i} :", len(operations))
 
-            #construction du vecteur de 0 et de 1
+            # Build the binary vector for the coloration encoding
             new_colors = utils.flatten(patches_colors)
             faces_etape_i = [self.faces[face_ind] for face_ind in range(len(self.faces)) if face_ind not in self.deleted_faces]
             print(f"Nombre de faces étape {i} :", len(faces_etape_i))
@@ -97,18 +97,16 @@ class Decimater(obja.Model):
                     vecteur += "0"
             vecteurs_couleurs.append(vecteur)
 
-            # Encodage 
+            # Encoding
             w_n = compute_wn(self, patchs, indexes_to_delete)
             w_n = [tuple(np.round(w * 1000).astype(int)) for w in w_n]
             w_n_encoded, coloration_encoded = encoding(w_n, vecteur)
 
             encoded_wns.append(w_n_encoded)
             encoded_colorations.append(coloration_encoded)
-            
-            # raise Exception('lol')
 
 
-        # Enregistrement du modèle avec le plus bas niveau de détail
+        # Save model with the lowest resolution
         save_as_obj("model_low.obj", self)
 
         # Iterate through the vertex
@@ -156,11 +154,16 @@ def main():
     """
     Runs the program on the model given as parameter.
     """
+    if len(sys.argv) < 2:
+        obj_name = 'hippo'
+    else :
+        obj_name = sys.argv[1]
+
     np.seterr(invalid = 'raise')
     model = Decimater()
-    model.parse_file('example/suzanne.obj')
+    model.parse_file(f'example/{obj_name}.obj')
 
-    with open('example/suzanne_prolonge2.obja', 'w') as output:
+    with open(f'example/progressive_{obj_name}.obja', 'w') as output:
         model.contract(output)
 
 

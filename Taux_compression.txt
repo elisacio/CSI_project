@@ -1,0 +1,8 @@
+Bunny : 57.12 %
+Cow : Error ordonnement
+Fandisk : -85.31 %
+hippo : trop long
+icosphere : 89,60 %
+pokemon : trop long
+sphere : error huffman
+suzanne : 93.13%
