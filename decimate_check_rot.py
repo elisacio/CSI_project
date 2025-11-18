@@ -104,6 +104,8 @@ class Decimater(obja.Model):
 
             encoded_wns.append(w_n_encoded)
             encoded_colorations.append(coloration_encoded)
+            
+            # raise Exception('lol')
 
 
         # Enregistrement du modèle avec le plus bas niveau de détail
