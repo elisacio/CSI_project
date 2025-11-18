@@ -46,7 +46,7 @@ class Decimater(obja.Model):
         self.deleted_vertices = set()
         
 
-    def contract(self, output):
+    def contract(self, output, obj_name):
         """
         Decimates the model stupidly, and write the resulting obja in output.
         """
@@ -107,7 +107,7 @@ class Decimater(obja.Model):
 
 
         # Save model with the lowest resolution
-        save_as_obj("model_low.obj", self)
+        save_as_obj(f'example/{obj_name}_low.obj', self)
 
         # Iterate through the vertex
         for (vertex_index, vertex) in enumerate(self.vertices):
@@ -141,11 +141,15 @@ class Decimater(obja.Model):
             else:
                 output_model.delete_face(index, value)
 
-        original_file = "example/suzanne.obj"
-
-        encoded_data_size = sum(len(e) for e in encoded_colorations) + sum(len(e) for e in encoded_wns)
+        original_file = f'example/{obj_name}.obj'
+        low_file = f'example/{obj_name}_low.obj'
+        size_low = os.path.getsize(low_file)
+        encoded_data_size = sum(len(e) for e in encoded_colorations) + sum(len(e) for e in encoded_wns) + size_low
         size_original = os.path.getsize(original_file)
-        compression_ratio = 100 * (1 - encoded_data_size / size_original)
+        #print("size of encoded data : ", encoded_data_size)
+        #print("size of original obj file : ", size_original)
+        #print("size of low res model :", size_low)
+        compression_ratio = 100 * (1 - (encoded_data_size / size_original))
         print(f"Taux de compression basé sur encodage : {compression_ratio:.2f} %")
             
         return encoded_colorations, encoded_wns
@@ -164,7 +168,7 @@ def main():
     model.parse_file(f'example/{obj_name}.obj')
 
     with open(f'example/progressive_{obj_name}.obja', 'w') as output:
-        model.contract(output)
+        model.contract(output, obj_name)
 
 
 if __name__ == '__main__':
