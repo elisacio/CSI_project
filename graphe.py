@@ -1,6 +1,8 @@
 import networkx as nx
 import unittest
 import obja
+import random
+
 
 """
 This file contains the function calculating the maximum independent set of the formed graph
@@ -35,6 +37,8 @@ def get_independent_set(model):
             G.add_edge(a, c)
 
     print('number of nodes: ', G.number_of_nodes())
+
+    random.seed(2)
 
     stable = nx.maximal_independent_set(G)
 
