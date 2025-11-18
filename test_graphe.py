@@ -3,18 +3,19 @@ import unittest
 import obja
 from graphe import get_independent_set
 import numpy as np
+from decimate_check_rot import Decimater
 
 
 class TestGetStable(unittest.TestCase):
 
     def test_empty(self):
         attendu = []
-        model = obja.Model()
+        model = Decimater()
         test = get_independent_set(model)
         self.assertEqual(test, attendu)
 
     def test_single_triangle(self):
-        model = obja.Model()
+        model = Decimater()
         model.vertices.append(np.array([0.0, 0.0, 0.0]))
         model.vertices.append(np.array([1.0, 0.0, 0.0]))
         model.vertices.append(np.array([0.0, 1.0, 0.0]))
@@ -25,7 +26,7 @@ class TestGetStable(unittest.TestCase):
         self.assertTrue(result[0] in [0, 1, 2])
 
     def test_two_triangles_sharing_edge(self):
-        model = obja.Model()
+        model = Decimater()
         for i in range(4):
             model.vertices.append(np.array([float(i), 0.0, 0.0]))
         model.faces.append(obja.Face(0, 1, 2))
@@ -40,7 +41,7 @@ class TestGetStable(unittest.TestCase):
                 )
 
     def test_disconnected_vertices(self):
-        model = obja.Model()
+        model = Decimater()
         for i in range(5):
             model.vertices.append(np.array([float(i), 0.0, 0.0]))
         
@@ -48,7 +49,7 @@ class TestGetStable(unittest.TestCase):
         self.assertEqual(len(result), 5)
 
     def test_tetrahedron(self):
-        model = obja.Model()
+        model = Decimater()
         for i in range(4):
             model.vertices.append(np.array([float(i), 0.0, 0.0]))
         model.faces.append(obja.Face(0, 1, 2))
@@ -60,7 +61,7 @@ class TestGetStable(unittest.TestCase):
         self.assertEqual(len(result), 1)
 
     def test_square_faces(self):
-        model = obja.Model()
+        model = Decimater()
         model.vertices.append(np.array([0.0, 0.0, 0.0]))
         model.vertices.append(np.array([1.0, 0.0, 0.0]))
         model.vertices.append(np.array([1.0, 1.0, 0.0]))
@@ -77,7 +78,7 @@ class TestGetStable(unittest.TestCase):
             )
 
     def test_independence_property(self):
-        model = obja.Model()
+        model = Decimater()
         vertices = [
             [0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0],
             [0.0, 0.0, 1.0], [1.0, 0.0, 1.0], [1.0, 1.0, 1.0], [0.0, 1.0, 1.0]
@@ -112,13 +113,13 @@ class TestGetStable(unittest.TestCase):
                                f"Les sommets {result[i]} et {result[j]} sont adjacents")
 
     def test_result_type(self):
-        model = obja.Model()
+        model = Decimater()
         model.vertices.append(np.array([0.0, 0.0, 0.0]))
         result = get_independent_set(model)
         self.assertIsInstance(result, list)
 
     def test_result_contains_valid_indices(self):
-        model = obja.Model()
+        model = Decimater()
         for i in range(5):
             model.vertices.append(np.array([float(i), 0.0, 0.0]))
         model.faces.append(obja.Face(0, 1, 2))
@@ -129,7 +130,7 @@ class TestGetStable(unittest.TestCase):
             self.assertLess(vertex_index, len(model.vertices))
 
     def test_linear_chain(self):
-        model = obja.Model()
+        model = Decimater()
         for i in range(5):
             model.vertices.append(np.array([float(i), 0.0, 0.0]))
         model.faces.append(obja.Face(0, 1, 2))
@@ -140,7 +141,7 @@ class TestGetStable(unittest.TestCase):
         self.assertGreaterEqual(len(result), 2)
 
     def test_maximality(self):
-        model = obja.Model()
+        model = Decimater()
         for i in range(3):
             model.vertices.append(np.array([float(i), 0.0, 0.0]))
         model.faces.append(obja.Face(0, 1, 2))
