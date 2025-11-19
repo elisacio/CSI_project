@@ -13,6 +13,7 @@ from graphe import get_independent_set
 from getBFT_triangles import getBFT
 from encoding import encoding
 from compute_wn import compute_wn
+import time
 
 def save_as_obj(path, model):
     dict_ecart = dict()
@@ -36,6 +37,10 @@ class OutputDel(obja.Output):
             file=self.output
         )
 
+    def change_color(self, index, id_color) :
+        color = "1.0 1.0 1.0" if id_color == 0 else "0.0 0.0 1.0"
+        print("fc {} {}".format(self.face_mapping[index] + 1, color), file=self.output)
+
 class Decimater(obja.Model):
     """
     A simple class that decimates a 3D model stupidly.
@@ -46,7 +51,7 @@ class Decimater(obja.Model):
         self.deleted_vertices = set()
         
 
-    def contract(self, output, obj_name):
+    def contract(self, output, obj_name, iter_max):
         """
         Decimates the model stupidly, and write the resulting obja in output.
         """
@@ -57,11 +62,18 @@ class Decimater(obja.Model):
 
         print('Taille faces set initial: ', len(self.faces))
 
-        for i in range(10):
+
+        for i in range(iter_max):
+            #init dict_colors
+            triangle_couleur = {}
+            for i in range(len(self.faces)):
+                triangle_couleur[i] = 0
+
             # Get indexes to remove 
             indexes_to_delete = get_independent_set(self) 
             # Remove faces and get patches
-            patchs, patches_colors, formated_faces = patch_vertex.patch_vertex(self, indexes_to_delete, operations)
+            patchs, patches_colors, formated_faces, triangle_couleur = patch_vertex.patch_vertex(self, indexes_to_delete, operations, triangle_couleur)
+            print(patches_colors)
             print('taille set deleted_faces: ', len(self.deleted_faces))
             print('taille deleted_vertices: ', len(self.deleted_vertices))
             
@@ -72,6 +84,9 @@ class Decimater(obja.Model):
             # Build the binary vector for the coloration encoding
             new_colors = utils.flatten(patches_colors)
             faces_etape_i = [self.faces[face_ind] for face_ind in range(len(self.faces)) if face_ind not in self.deleted_faces]
+            
+            index_faces_etape_i = [face_ind for face_ind in range(len(self.faces)) if face_ind not in self.deleted_faces]
+
             ordre_faces_etape_i = getBFT(faces_etape_i)
             vecteur = ""
             for face in ordre_faces_etape_i :
@@ -81,6 +96,14 @@ class Decimater(obja.Model):
                 else :
                     vecteur += "0"
             vecteurs_couleurs.append(vecteur)
+
+            # Add colors operations
+            for i in range(len(self.faces)) :
+                if i in index_faces_etape_i :
+                    operations.append(('couleur', i, triangle_couleur[i]))
+
+
+            
             # Encoding
             w_n = compute_wn(self, patchs, indexes_to_delete)
             w_n = [tuple(np.round(w * 1000).astype(int)) for w in w_n]
@@ -88,6 +111,7 @@ class Decimater(obja.Model):
 
             encoded_wns.append(w_n_encoded)
             encoded_colorations.append(coloration_encoded)
+            
 
             #raise Exception('lol')
 
@@ -108,7 +132,12 @@ class Decimater(obja.Model):
                         if vertex_index in [face.a,face.b,face.c]:
                             self.deleted_faces.add(face_index)
                             # Add the instruction to operations stack
+                            if face_index in triangle_couleur.keys() :
+                                operations.append(('couleur', face_index, triangle_couleur[face_index]))
+                            else :
+                                operations.append(('couleur', face_index, 0))
                             operations.append(('face', face_index, face))
+                            
 
                 # Delete the vertex
                 operations.append(('vertex', vertex_index, vertex))
@@ -117,13 +146,16 @@ class Decimater(obja.Model):
         operations.reverse()
 
         # Write the result in output file
-        output_model = OutputDel(output, random_color=True)
+        output_model = OutputDel(output)
 
         for (ty, index, value) in operations:
+            print(ty, index, value)
             if ty == "vertex":
                 output_model.add_vertex(index, value)
             elif ty == "face":
-                output_model.add_face(index, value)   
+                output_model.add_face(index, value)
+            elif ty == "couleur" :
+                output_model.change_color(index, value) 
             else:
                 output_model.delete_face(index, value)
 
@@ -144,10 +176,12 @@ def main():
     """
     Runs the program on the model given as parameter.
     """
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         obj_name = 'bunny'
+        iter_max = 5
     else :
         obj_name = sys.argv[1]
+        iter_max = int(sys.argv[2])
 
     print(obj_name)
 
@@ -155,8 +189,8 @@ def main():
     model = Decimater()
     model.parse_file(f'example/{obj_name}.obj')
 
-    with open(f'example/progressive_{obj_name}.obja', 'w') as output:
-        model.contract(output, obj_name)
+    with open(f'example/progressive__{obj_name}.obja', 'w') as output:
+        model.contract(output, obj_name, iter_max)
 
 
 if __name__ == '__main__':

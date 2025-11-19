@@ -37,7 +37,7 @@ def ordonnement(face_vertices, faces_voisines):
         consecutive_list.append(start)
     return consecutive_list
 
-def patch_vertex(model, indices_a_supprimer, operations):
+def patch_vertex(model, indices_a_supprimer, operations, triangle_couleur):
     """
     Prend en entrée les indices des vertex à supprimer, prend la liste des opérations de décimations
     Renvoie la liste des patchs ( la liste des indices dans l'ordre tel que la normale soit dans le bon sens )
@@ -54,7 +54,7 @@ def patch_vertex(model, indices_a_supprimer, operations):
         # face_vertices_set = set(face_vertices)
         #list_vertex_sorted = ordonnement(face_vertices, faces_voisines, vertex_index)
         list_vertex_sorted = ordonnement(face_vertices, faces_voisines)
-        # print(consecutive_list)        
+        # print(consecutive_list)
 
         if len(list_vertex_sorted) != 0:
             new_triangles, colors = zigzag_coloration.draw_zigzag(tuple(list_vertex_sorted))
@@ -94,14 +94,18 @@ def patch_vertex(model, indices_a_supprimer, operations):
                     #print('vertices of triangle: ', [model.vertices[i] for i in triangle])
                     f_ind = compare_norm(model.vertices, initial_normal, triangle)
                     f = obja.Face(f_ind[0], f_ind[1], f_ind[2])
+                    triangle_couleur[last_index+i] = colors[i]
                     model.faces.append(f)
                     operations.append(('del', last_index+i, f))
                     i += 1
             
-            operations.extend([('face', face_ind, model.faces[face_ind]) for face_ind in faces_voisines])
+            for face_ind in faces_voisines :
+                operations.append(('face', face_ind, model.faces[face_ind]))
+                if model.faces[face_ind] in triangle_couleur.keys() :
+                    operations.append(('couleur', face_ind, triangle_couleur[model.faces[face_ind]]))
             model.deleted_faces.update({face_ind for face_ind in faces_voisines})
             
             operations.append(('vertex', vertex_index, model.vertices[vertex_index]))
             model.deleted_vertices.add(vertex_index)
     
-    return patchs, patches_colors, model.faces[index_face:-1]
+    return patchs, patches_colors, model.faces[index_face:-1], triangle_couleur
