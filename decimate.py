@@ -175,12 +175,15 @@ def main():
     """
     Runs the program on the model given as parameter.
     """
-    if len(sys.argv) < 3:
-        obj_name = 'bunny'
-        iter_max = 5
-    else :
+    if len(sys.argv) == 3:
         obj_name = sys.argv[1]
         iter_max = int(sys.argv[2])
+    elif len(sys.argv) == 2:
+        obj_name = sys.argv[1]
+        iter_max = 5
+    else :
+        obj_name = 'bunny'
+        iter_max = 5
 
     print(obj_name)
 
