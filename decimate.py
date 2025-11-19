@@ -185,8 +185,6 @@ def main():
         obj_name = 'bunny'
         iter_max = 5
 
-    print(obj_name)
-
     np.seterr(invalid = 'raise')
     model = Decimater()
     model.parse_file(f'example/{obj_name}.obj')
