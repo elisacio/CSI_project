@@ -54,20 +54,6 @@ class Decimater(obja.Model):
         vecteurs_couleurs = []
         encoded_wns = []
         encoded_colorations = []
-        sens_counterclock = False
-
-        # find counterclock or clock wise
-        centroid_shape = utils.shape_centroid(self.vertices)
-        ok = [check_rotation.check_rotation(self.vertices, [face.a, face.b, face.c], centroid_shape) for face in self.faces]
-        if sum(ok) > len(ok) - sum(ok):
-            sens_counterclock = True
-
-        nb_true = sum(ok)
-        nb_false = len(ok) - nb_true
-        print('number counter clock wise: ', nb_true)
-        print('number clock wise: ', nb_false)
-        print('nb all: ', len(ok))
-        # raise Exception('counter or clock')
 
         print('Taille faces set initial: ', len(self.faces))
 
@@ -75,7 +61,7 @@ class Decimater(obja.Model):
             # Get indexes to remove 
             indexes_to_delete = get_independent_set(self) 
             # Remove faces and get patches
-            patchs, patches_colors, formated_faces = patch_vertex.patch_vertex(self, indexes_to_delete, operations, sens_counterclock)
+            patchs, patches_colors, formated_faces = patch_vertex.patch_vertex(self, indexes_to_delete, operations)
             print('taille set deleted_faces: ', len(self.deleted_faces))
             print('taille deleted_vertices: ', len(self.deleted_vertices))
             
@@ -104,6 +90,8 @@ class Decimater(obja.Model):
 
             encoded_wns.append(w_n_encoded)
             encoded_colorations.append(coloration_encoded)
+
+            raise Exception('lol')
 
 
         # Save model with the lowest resolution
