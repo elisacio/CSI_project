@@ -1,8 +1,8 @@
-import networkx as nx
+import networkx as nx # type: ignore
 import unittest
 import obja
 from graphe import get_independent_set
-import numpy as np
+import numpy as np # type: ignore
 from decimate import Decimater
 
 

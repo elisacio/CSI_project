@@ -2,7 +2,6 @@ import obja
 import numpy as np # type: ignore
 import sys
 import networkx as nx # type: ignore
-from utils import shape_centroid
 
 def normal_triangle(vertices, face_vert):
     """

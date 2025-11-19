@@ -9,22 +9,26 @@ import unittest
 def flatten(xss):
     return [x for xs in xss for x in xs]
 
-def rotate_until_first(lst, target):
+def rotate_until_first(liste, target):
     try:
-        i = lst.index(target)
+        i = liste.index(target)
     except ValueError:
-        return lst
+        return liste
 
-    return lst[i:] + lst[:i]
+    return liste[i:] + liste[:i]
 
+'''
 def shape_centroid(vertices_set):
     # Return Centroid of the 3D shape which is the mean of each value
     vert_coor = np.array([i for (_, i) in enumerate(vertices_set)])
     cent = np.sum(vert_coor, axis=0)
     cent = cent / len(vertices_set)
-    return cent
+    return cent'''
 
 def face_from_vertex(model, vertex_index) :
+    """
+    Return the faces not deleted with vertex_index as a vertex of the face
+    """
     liste_face = []
     for (face_index, face) in enumerate(model.faces) :
         if face_index not in model.deleted_faces:
@@ -34,6 +38,9 @@ def face_from_vertex(model, vertex_index) :
     return liste_face
 
 def equal(face, triangle):
+    """
+    Return True if the indexes of the triangle are the same as the indexes of the vertices of the face
+    """
     return face.a in triangle and face.b in triangle and face.c in triangle
 
 def face_already_exist(model, triangle):
