@@ -54,7 +54,7 @@ def patch_vertex(model, indices_a_supprimer, operations):
         # face_vertices_set = set(face_vertices)
         #list_vertex_sorted = ordonnement(face_vertices, faces_voisines, vertex_index)
         list_vertex_sorted = ordonnement(face_vertices, faces_voisines)
-        # print(consecutive_list)
+        # print(consecutive_list)        
 
         if len(list_vertex_sorted) != 0:
             new_triangles, colors = zigzag_coloration.draw_zigzag(tuple(list_vertex_sorted))
