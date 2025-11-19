@@ -170,7 +170,7 @@ class Decimater(obja.Model):
         compression_ratio = 100 * (1 - (encoded_data_size / size_original))
         print(f"Taux de compression basé sur encodage : {compression_ratio:.2f} %")
             
-        return encoded_colorations, encoded_wns
+        return encoded_colorations, encoded_wns, compression_ratio
 
 def main():
     """
