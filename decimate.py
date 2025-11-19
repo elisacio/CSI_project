@@ -39,7 +39,7 @@ class OutputDel(obja.Output):
 
     def change_color(self, index, id_color) :
         color = "1.0 1.0 1.0" if id_color == 0 else "0.0 0.0 1.0"
-        print("fc {} {}".format(self.face_mapping[index] + 1, color), file=self.output)
+        #print("fc {} {}".format(self.face_mapping[index] + 1, color), file=self.output)
 
 class Decimater(obja.Model):
     """
@@ -66,14 +66,13 @@ class Decimater(obja.Model):
         for i in range(iter_max):
             #init dict_colors
             triangle_couleur = {}
-            for i in range(len(self.faces)):
-                triangle_couleur[i] = 0
+            for ind in range(len(self.faces)):
+                triangle_couleur[ind] = 0
 
             # Get indexes to remove 
             indexes_to_delete = get_independent_set(self) 
             # Remove faces and get patches
             patchs, patches_colors, formated_faces, triangle_couleur = patch_vertex.patch_vertex(self, indexes_to_delete, operations, triangle_couleur)
-            print(patches_colors)
             print('taille set deleted_faces: ', len(self.deleted_faces))
             print('taille deleted_vertices: ', len(self.deleted_vertices))
             
@@ -98,9 +97,9 @@ class Decimater(obja.Model):
             vecteurs_couleurs.append(vecteur)
 
             # Add colors operations
-            for i in range(len(self.faces)) :
-                if i in index_faces_etape_i :
-                    operations.append(('couleur', i, triangle_couleur[i]))
+            for ind in range(len(self.faces)) :
+                if ind in index_faces_etape_i :
+                    operations.append(('couleur', ind, triangle_couleur[ind]))
 
 
             
