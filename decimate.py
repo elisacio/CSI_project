@@ -149,7 +149,7 @@ class Decimater(obja.Model):
         output_model = OutputDel(output)
 
         for (ty, index, value) in operations:
-            print(ty, index, value)
+            #print(ty, index, value)
             if ty == "vertex":
                 output_model.add_vertex(index, value)
             elif ty == "face":
