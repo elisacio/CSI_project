@@ -72,7 +72,6 @@ class Decimater(obja.Model):
             # Build the binary vector for the coloration encoding
             new_colors = utils.flatten(patches_colors)
             faces_etape_i = [self.faces[face_ind] for face_ind in range(len(self.faces)) if face_ind not in self.deleted_faces]
-            print(f"Nombre de faces étape {i} :", len(faces_etape_i))
             ordre_faces_etape_i = getBFT(faces_etape_i)
             vecteur = ""
             for face in ordre_faces_etape_i :
@@ -82,7 +81,6 @@ class Decimater(obja.Model):
                 else :
                     vecteur += "0"
             vecteurs_couleurs.append(vecteur)
-
             # Encoding
             w_n = compute_wn(self, patchs, indexes_to_delete)
             w_n = [tuple(np.round(w * 1000).astype(int)) for w in w_n]
@@ -91,7 +89,7 @@ class Decimater(obja.Model):
             encoded_wns.append(w_n_encoded)
             encoded_colorations.append(coloration_encoded)
 
-            raise Exception('lol')
+            #raise Exception('lol')
 
 
         # Save model with the lowest resolution
@@ -147,9 +145,11 @@ def main():
     Runs the program on the model given as parameter.
     """
     if len(sys.argv) < 2:
-        obj_name = 'hippo'
+        obj_name = 'bunny'
     else :
         obj_name = sys.argv[1]
+
+    print(obj_name)
 
     np.seterr(invalid = 'raise')
     model = Decimater()

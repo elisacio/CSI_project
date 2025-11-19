@@ -52,7 +52,8 @@ def patch_vertex(model, indices_a_supprimer, operations):
         faces_voisines = utils.face_from_vertex(model, vertex_index)
         face_vertices = [utils.rotate_until_first([model.faces[face_ind].a, model.faces[face_ind].b, model.faces[face_ind].c], vertex_index) for face_ind in faces_voisines]
         # face_vertices_set = set(face_vertices)
-        list_vertex_sorted = ordonnement(face_vertices, faces_voisines, vertex_index)
+        #list_vertex_sorted = ordonnement(face_vertices, faces_voisines, vertex_index)
+        list_vertex_sorted = ordonnement(face_vertices, faces_voisines)
         # print(consecutive_list)
 
         if len(list_vertex_sorted) != 0:
@@ -72,7 +73,7 @@ def patch_vertex(model, indices_a_supprimer, operations):
                 normals = [normal_triangle(model.vertices, triang) for triang in new_triangles]
                 # print('normals', normals)
                 has_zero_vector = any(all(x == 0 for x in v) for v in normals)
-                print('has zero normal: ', has_zero_vector)
+                #print('has zero normal: ', has_zero_vector)
                 # has_same_face = any(utils.face_already_exist(model, triangle) for triangle in new_triangles)
                 # print('has same face: ', has_same_face)
 
@@ -80,17 +81,17 @@ def patch_vertex(model, indices_a_supprimer, operations):
             retriangulated_patches.append(new_triangles)
             patches_colors.append(colors)
             last_index = len(model.faces)
-            print('initial normal face vertices: ', face_vertices)
-            print('initial normal vertices set: ', [(i, model.vertices[i]) for i in utils.flatten(face_vertices)])
+            #print('initial normal face vertices: ', face_vertices)
+            #print('initial normal vertices set: ', [(i, model.vertices[i]) for i in utils.flatten(face_vertices)])
             initial_normal = mean_normals(model.vertices, face_vertices)
-            print('initial normal: ', initial_normal)
+            #print('initial normal: ', initial_normal)
 
             # build operations
             i = 0
             for triangle in new_triangles:
                 if not utils.face_already_exist(model, triangle):
-                    print('triangle: ', triangle)
-                    print('vertices of triangle: ', [model.vertices[i] for i in triangle])
+                    #print('triangle: ', triangle)
+                    #print('vertices of triangle: ', [model.vertices[i] for i in triangle])
                     f_ind = compare_norm(model.vertices, initial_normal, triangle)
                     f = obja.Face(f_ind[0], f_ind[1], f_ind[2])
                     model.faces.append(f)

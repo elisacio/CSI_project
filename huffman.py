@@ -25,7 +25,6 @@ def build_huffman_tree(symbols, freq):
         merged_node.left = left_child
         merged_node.right = right_child
         heapq.heappush(priority_queue, merged_node)
-
     return priority_queue[0]
 
 def generate_huffman_codes(node, code="", huffman_codes={}):
