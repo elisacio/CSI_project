@@ -3,7 +3,7 @@ import unittest
 import obja
 from graphe import get_independent_set
 import numpy as np
-from decimate_check_rot import Decimater
+from decimate import Decimater
 
 
 class TestGetStable(unittest.TestCase):
