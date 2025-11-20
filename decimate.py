@@ -59,7 +59,7 @@ class Decimater(obja.Model):
         encoded_wns = []
         encoded_colorations = []
         
-        print(f'\nSarting the compression of {obj_name}...\n')
+        print(f'\nStarting the compression of {obj_name}...\n')
 
         for i in range(iter_max):
             #init dict_colors
