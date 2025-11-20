@@ -9,21 +9,25 @@ import unittest
 import utils
 import zigzag_coloration
 
-"""
-def couple_index_face(face, deleted_index):
-    result = [face.a, face.b, face.c]
-    result = [ind for ind in result if ind != deleted_index]
-    return result"""
-
 def verifier_ferme(couples):
     """
-    Checker si la liste de couples est fermée
+    Verify if list of couples is closed
+
+    Args:
+        couples: list of list of indexes (ex: [[1, 2], [2, 4]])
+        
+    Returns:
+        True if the list is closed properly
+
     """
     couples_bis = set(utils.flatten(couples))
     compteur = Counter(utils.flatten(couples))
     return (len(couples_bis) == len(couples)) and all(valeur == 2 for valeur in compteur.values())
 
 def ordonnement(face_vertices, faces_voisines):
+    """
+    Ordonnate the faces
+    """
     couples = [face_vert[1:] for face_vert in face_vertices]
     if not verifier_ferme(couples) or len(couples) <= 2 or len(faces_voisines) <= 4 :
         return []
