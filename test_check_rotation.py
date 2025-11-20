@@ -1,5 +1,5 @@
 import unittest
-import numpy as np # pyright: ignore[reportMissingImports]
+import numpy as np
 import check_rotation
 
 

@@ -1,7 +1,7 @@
 import obja
-import numpy as np # type: ignore
+import numpy as np
 import sys
-import networkx as nx # type: ignore
+import networkx as nx
 
 def normal_triangle(vertices, face_vert):
     """

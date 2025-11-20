@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 # Shamefully copied from this gist :
 # https://gist.github.com/pankajp/280596a5dabaeeceaaaa/
 

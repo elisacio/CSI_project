@@ -36,13 +36,9 @@ def get_independent_set(model):
             G.add_edge(b, c)
             G.add_edge(a, c)
 
-    print('number of nodes: ', G.number_of_nodes())
-
     random.seed(2)
 
     stable = nx.maximal_independent_set(G)
-
-    print('taille stable', len(stable))
 
     return stable
 

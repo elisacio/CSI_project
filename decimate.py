@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-
 import obja
 import os
-import numpy as np # type: ignore
+import numpy as np
 import sys
-import networkx as nx # type: ignore
+import networkx as nx
 import check_rotation
 import patch_vertex
 import zigzag_coloration
@@ -53,15 +51,15 @@ class Decimater(obja.Model):
 
     def contract(self, output, obj_name, iter_max):
         """
-        Decimates the model stupidly, and write the resulting obja in output.
+        Decimates the model using the arbitrary tringular meshes method,
+        and write the resulting obja in output.
         """
         operations = []
         vecteurs_couleurs = []
         encoded_wns = []
         encoded_colorations = []
-
-        print('Taille faces set initial: ', len(self.faces))
-
+        
+        print(f'\nSarting the compression of {obj_name}...\n')
 
         for i in range(iter_max):
             #init dict_colors
@@ -73,12 +71,7 @@ class Decimater(obja.Model):
             indexes_to_delete = get_independent_set(self) 
             # Remove faces and get patches
             patchs, patches_colors, formated_faces, triangle_couleur = patch_vertex.patch_vertex(self, indexes_to_delete, operations, triangle_couleur)
-            print('taille set deleted_faces: ', len(self.deleted_faces))
-            print('taille deleted_vertices: ', len(self.deleted_vertices))
-            
-            print('Taille faces ajoutées: ', len(formated_faces))
-            print('Taille faces set after adding new ones: ', len(self.faces))
-            print(f"Nombre d'opérations {i} :", len(operations))
+            print(f'Iteration n°{i+1}\n.\n.\n.\n')
 
 
             # Build the binary vector for the coloration encoding
@@ -102,8 +95,6 @@ class Decimater(obja.Model):
                 if ind in index_faces_etape_i :
                     operations.append(('couleur', ind, triangle_couleur[ind]))
 
-
-            
             # Encoding
             w_n = compute_wn(self, patchs, indexes_to_delete)
             w_n = [tuple(np.round(w * 1000).astype(int)) for w in w_n]
@@ -111,13 +102,9 @@ class Decimater(obja.Model):
 
             encoded_wns.append(w_n_encoded)
             encoded_colorations.append(coloration_encoded)
-            
-
-            #raise Exception('lol')
-
 
         # Save model with the lowest resolution
-        save_as_obj(f'example/{obj_name}_low.obj', self)
+        save_as_obj(f'progressive_models/{obj_name}_low.obj', self)
 
         # Iterate through the vertex
         for (vertex_index, vertex) in enumerate(self.vertices):
@@ -160,15 +147,12 @@ class Decimater(obja.Model):
                 output_model.delete_face(index, value)
 
         original_file = f'example/{obj_name}.obj'
-        low_file = f'example/{obj_name}_low.obj'
+        low_file = f'progressive_models/{obj_name}_low.obj'
         size_low = os.path.getsize(low_file)
         encoded_data_size = sum(len(e) for e in encoded_colorations) + sum(len(e) for e in encoded_wns) + size_low
         size_original = os.path.getsize(original_file)
-        #print("size of encoded data : ", encoded_data_size)
-        #print("size of original obj file : ", size_original)
-        #print("size of low res model :", size_low)
         compression_ratio = 100 * (1 - (encoded_data_size / size_original))
-        print(f"Taux de compression basé sur encodage : {compression_ratio:.2f} %")
+        print(f"\nCompression ratio = {compression_ratio:.2f} %\n")
             
         return encoded_colorations, encoded_wns, compression_ratio
 
@@ -190,7 +174,7 @@ def main():
     model = Decimater()
     model.parse_file(f'example/{obj_name}.obj')
 
-    with open(f'example/progressive__{obj_name}.obja', 'w') as output:
+    with open(f'progressive_models/progressive__{obj_name}.obja', 'w') as output:
         model.contract(output, obj_name, iter_max)
 
 

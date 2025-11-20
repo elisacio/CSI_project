@@ -1,9 +1,8 @@
-#!/usr/bin/env python
 from collections import Counter
 import obja
-import numpy as np # type: ignore
+import numpy as np
 import sys
-import networkx as nx # type: ignore
+import networkx as n 
 from check_rotation import mean_normals, compare_norm, normal_triangle
 import unittest
 import utils

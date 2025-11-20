@@ -1,8 +1,0 @@
-Bunny : 58.55 %
-Cow : 51.59 %
-Fandisk : 51.76 %
-hippo : 30.58% (5 iterations)
-icosphere : 53.05 %
-pokemon : 
-sphere : error 
-suzanne : 82.03 %

@@ -1,9 +1,7 @@
-#!/usr/bin/env python
-
 import obja
-import numpy as np # type: ignore
+import numpy as np
 import sys
-import networkx as nx # type: ignore
+import networkx as nx
 import unittest
 
 def flatten(liste):

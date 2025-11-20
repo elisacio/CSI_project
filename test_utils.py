@@ -1,5 +1,5 @@
 import unittest
-import numpy as np # type: ignore
+import numpy as np
 import utils
 from decimate import Decimater
 import obja
