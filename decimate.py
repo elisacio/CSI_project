@@ -39,7 +39,7 @@ class OutputDel(obja.Output):
 
     def change_color(self, index, id_color) :
         color = "1.0 1.0 1.0" if id_color == 0 else "0.0 0.0 1.0"
-        #print("fc {} {}".format(self.face_mapping[index] + 1, color), file=self.output)
+        print("fc {} {}".format(self.face_mapping[index] + 1, color), file=self.output)
 
 class Decimater(obja.Model):
     """
