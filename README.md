@@ -54,7 +54,7 @@ the execution in the terminal.
 
 ### Progressiveness
 The progressiveness of our models can be evaluated by uploading
-the obja files obtained in the evaluation benchmark site ().
+the obja files obtained in the benchmarking website http://csi-benchmark.mooo.com/.
 
 ### Compression ratio per iteration
 The evolution of the compression ratio for a given model can be visualised by running the
