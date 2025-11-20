@@ -34,7 +34,7 @@ in the terminal.
 ## Visualizing the progressive decompression
 To visualize the progressive decompression of the model,
 run the server.py file and go to http://localhost:8000.
-A specific model can be visualized by adding "?progressive_model/progressive__(obj_model).obja" 
+A specific model can be visualized by adding "?progressive_models/progressive__(obj_model).obja" 
 at the end of the adress.
 
 Example of usage: 
