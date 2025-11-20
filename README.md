@@ -1,222 +1,68 @@
-# OBJ augmenté
+# Compression and Progressive Decoding of 3D Model using Arbitrary Triangular Meshes
 
-WaveFront OBJ est un format permettant d'encoder des modèles 3D de manière
-simple. Cependant, il n'est pas adapté aux représentations progressives. Pour
-cela, nous avons augmenté OBJ de nouvelles commandes qui permettent de modifier
-le contenu préalablement déclaré.
+## Introduction
+This README provides instructions on running the code and replicating the results of our project.
+The aim of this project was to create a progressive model using the Progressive Compression of Arbitrary Triangular Meshes
+method introduced by Cohen-Or, Levin and Remez in 1999.
 
-## Utilisation
-
-Vous pouvez récupérer les sources de cette application en lançant la commande
+## Requirements
+To run this project, Python 3.6+ and the libraries contained in the `requirements.txt` file are required.
+The libraries listed in requirements.txt can be installed by using the following command:
 ```
-git clone https://gitea.tforgione.fr/tforgione/obja
-```
-
-## Écriture d'un logiciel de compression progressive
-
-Le module `obja.py` permet de parser facilement des fichiers OBJ et de générer
-des fichiers au format OBJA.
-
-La classe `obja.Model` permet de facilement parser un fichier OBJ (grâce à la
-méthode `parse_file`. Elle contient les attributs suivants :
-
-  - `vertices` : une liste de `numpy.array` qui représente les sommets du
-    modèle (attention, les vecteurs sont en ligne)
-  - `faces` : une liste de `obja.Face`, qui contiennent eux-mêmes des attributs
-    `a`, `b` et `c` qui sont les indices des sommets dans l'attribut
-    `vertices` (les indices commencent à partir de 0).
-
-La classe `obja.Output` permet de générer facilement un modèle OBJA. Lors de la
-transformation d'un modèle pour l'adapter à un chargement progressif, le modèle
-doit être reconstruit et les indices des sommets et faces sont changés. La
-classe permet de travailler avec les indices du modèle d'origine, et donc de
-gérer automatiquement la transformation des indices de l'ancien modèle vers le
-nouveau modèle.
-
-Le fichier `decimate.py` contient un exemple basique de programme permettant la
-réécriture d'un fichier OBJ en OBJA de manière naïve. Il contient un programme
-principal qui transforme le fichier `example/suzanne.obj` en
-`example/suzanne.obja`, le rendant progressif.
-
-## Visualisation du streaming
-
-À la racine de ce projet, le script `server.py` vous permet de démarrer un
-server de streaming. Vous pouvez l'exécuter en lançant `./server.py`. Une fois
-cela fait, vous pouvez allez sur [localhost:8000](http://localhost:8000) pour
-lancer le streaming. Le navigateur télécharge progressivement les données et
-les affiche.
-
-Les modèles peuvent être
-visualisés en ajoutant `?chemin/nom_du_modele.obj` à la fin de l'url. Par exemple,
-[localhost:8000/?example/bunny.obja](http://localhost:8000/?example/bunny.obja)
-chargera le modèle `bunny.obja` du dossier `example`. Ce modèle est un modèle
-d'exemple, il commence par encoder la version basse résolution du [Stanford
-bunny](https://graphics.stanford.edu/data/3Dscanrep/), translate tous ses
-sommets, les retranslate vers leurs positions d'origine puis supprime toutes
-les faces.
-
-### Détails du format OBJA
-
-###### Ajout d'un sommet
-
-Comme dans le OBJ standard, pour ajouter un sommet, il suffit d'utiliser le
-caractère `v` suivi des coordonnées du sommet. Par exemple :
-
-```
-v 1.0 2.0 3.0
+pip install -r requirements.txt
 ```
 
-###### Ajout d'une face
+## Creating a progressive model
+A progressive model (OBJA file) can be created by running the `decimate.py` file.
+This code takes 0, 1 or 2 arguments. The first argument is for the name of the model, and the second one is for the
+number of iterations. If none are given, the 'bunny' model will be compressed
+over 5 iterations. 
 
-Comme dans le OBJ standard, pour ajouter une face, il suffit d'utiliser le
-caractère `f` suivi des indices des sommets de la face. Par exemple :
+Examples of correct usage:
+```
+python3 decimate.py
+```
+```
+python3 decimate.py cow 
+```
+```
+python3 decimate.py cow 8 
+```
+At the end of the compression process, the compression ratio will be displayed
+in the terminal.
+
+## Visualizing the progressive decompression
+To visualize the progressive decompression of the model,
+run the server.py file and go to http://localhost:8000.
+A specific model can be visualized by adding "?progressive_model/progressive__(obj_model).obja" 
+at the end of the adress.
+
+Example of usage: 
+
+To visualize the progressive decompression of the model 'cow',
+first run the `server.py` file:
+```
+python3 server.py
+```
+Then, open a web browser and go to http://localhost:8000/?progressive_model/progressive__cow.obja.
+
+## Guide for replicating the results
+### Compression ratio
+To compute the compression ratio obtained with our proposed solution,
+run the `decimate.py` file. The compression ratio will be displayed at the end of
+the execution in the terminal.
+
+### Progressiveness
+The progressiveness of our models can be evaluated by uploading
+the obja files obtained in the evaluation benchmark site ().
+
+### Compression ratio per iteration
+The evolution of the compression ratio for a given model can be visualised by running the
+`efficiency_iteration.py` file. This code takes 0 or 2 argument. If none are given, the results
+for the model 'bunny' will be displayed.
+
+Example:
 
 ```
-v 0.0 0.0 0.0
-v 1.0 0.0 0.0
-v 1.0 1.0 0.0
-f 1 2 3
+python3 efficiency_iteration.py cow
 ```
-
-**Attention :** en OBJ, les indices commencent à partir de 1
-
-**Attention :** dans notre logiciel, seules les faces triangulaires sont
-implémentées.
-
-###### Edition d'un sommet
-
-Notre format OBJ permet la modification d'un ancien sommet. Pour modifier un
-sommet, il suffit d'utiliser les caractères `ev` suivis de l'indice du sommet à
-modifier puis de ses nouvelles coordonées. Par exemple :
-
-```
-v 0.0 0.0 0.0
-ev 1 1.0 1.0 1.0
-```
-
-###### Translation d'un sommet
-
-De la même façon, un sommet peut être translaté grâce aux caractères `tv`. Par
-exemple :
-
-```
-v 1.0 2.0 3.0
-tv 1 1.0 1.0 1.0
-```
-
-###### Edition d'une face
-
-Notre format OBJ permet la modification d'une ancienne face. Pour modifier une
-face, il suffit d'utiliser les caractères `ef` suivis de l'indice de la face à
-modifier puis des indices de ses nouveaux sommets. Par exemple :
-
-```
-v 0.0 0.0 0.0
-v 1.0 0.0 0.0
-v 1.0 1.0 0.0
-v 1.0 1.0 1.0
-f 1 2 3
-ef 1 1 2 4
-```
-
-On peut aussi changer un seul sommet d'une face grâce aux caractères `efv`,
-suivi de l'indice de la face à modifier, de l'indice du sommet à modifier (1, 2
-ou 3) et de la nouvelle valeur du sommet. Par exemple :
-
-```
-v 0.0 0.0 0.0
-v 1.0 0.0 0.0
-v 1.0 1.0 0.0
-v 1.0 1.0 1.0
-f 1 2 3
-efv 1 3 4
-```
-
-###### Suppression d'une face
-Notre format OBJ permet la suppression d'une ancienne face. Pour supprimer une
-face, il suffit d'utiliser les caracètres `df` suivis de l'indice de la face à
-supprimer. Par exemple :
-
-```
-v 0.0 0.0 0.0
-v 1.0 0.0 0.0
-v 1.0 1.0 0.0
-v 1.0 1.0 1.0
-f 1 2 3
-df 1
-```
-
-**Attention :** les indices des faces suivantes ne sont pas changés après la
-suppression d'une ancienne face.
-
-##### Changer la couleur d'une face
-
-Notre format OBJ permet de changer la couleur d'une face. Pour changer la
-couleur d'une face, il suffit de d'utiliser les caractères `fc` suivis de
-l'indice de la face dont vous souhaitez changer la couleur, puis des
-composantes rouges, vertes et bleues, entre 0 et 1.
-
-
-```
-v 0.0 0.0 0.0
-v 1.0 0.0 0.0
-v 1.0 1.0 0.0
-v 1.0 1.0 1.0
-f 1 2 3
-fc 1 1.0 0.0 0.0
-```
-
-###### Triangle strips et triangle fans
-Pour la compression de contenu 3D, on peut utiliser des [Triangle
-Strips](https://en.wikipedia.org/wiki/Triangle_strip) et des [Triangle
-Fans](https://en.wikipedia.org/wiki/Triangle_fan).
-
-Notre format OBJ augmenté permet la déclaration de strips et de fans en
-utilisant respectivement les caractères `ts` et `tf` suivis des indices des
-sommets. Par exemple :
-
-```
-v -1.0 0.0 0.0
-v -0.5 1.0 0.0
-v 0.0 0.0 0.0
-v 0.5 1.0 0.0
-v 1.0 0.0 0.0
-ts 1 2 3 4 5
-```
-
-ou bien
-
-```
-v 0.0 0.0 0.0
-v -1.0 0.0 0.0
-v -0.707 0.707 0.0
-v 0.0 1.0 0.0
-v 0.707 0.707 0.0
-v 1.0 0.0 0.0
-tf 1 2 3 4 5 6
-```
-
-###### Déclaration de la taille en octets
-
-À tout moment, dans votre fichier, vous pouvez utiliser l'instruction
-
-```
-s 35223
-```
-
-qui déclare la taille actuelle du modèle (cumulée, en octets). Cette instruction permettra
-plus tard d'évaluer le débit distortion au cours du temps de chargement. Par exemple
-
-```
-v 0.0 0.0 0.0
-v 1.0 0.0 0.0
-v 0.0 1.0 0.0
-f 1 2 3
-s 43
-ef 1 2 2 3
-s 48
-```
-
-déclare un modèle de 43 octets défini par un triangle. Vous pouvez ensuite
-rajouter d'autres instructions pour modifier le modèle puis remettre une
-instruction `s` pour spécifier la nouvelle taille.
