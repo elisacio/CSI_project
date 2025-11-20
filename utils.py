@@ -6,10 +6,31 @@ import sys
 import networkx as nx # type: ignore
 import unittest
 
-def flatten(xss):
-    return [x for xs in xss for x in xs]
+def flatten(liste):
+    """
+    Flatten a list of lists
+
+    Args:
+        liste: list of lists
+        
+    Returns:
+        flattened liste
+    
+    """
+    return [x for xs in liste for x in xs]
 
 def rotate_until_first(liste, target):
+    """
+    Rotate the list until the target is the first element and keep the original order.
+    
+    Args:
+        liste: list of integers
+        target: integer to be put in first place
+        
+    Returns:
+        list rotated with target as the first element
+    
+    """
     try:
         i = liste.index(target)
     except ValueError:
@@ -17,17 +38,16 @@ def rotate_until_first(liste, target):
 
     return liste[i:] + liste[:i]
 
-'''
-def shape_centroid(vertices_set):
-    # Return Centroid of the 3D shape which is the mean of each value
-    vert_coor = np.array([i for (_, i) in enumerate(vertices_set)])
-    cent = np.sum(vert_coor, axis=0)
-    cent = cent / len(vertices_set)
-    return cent'''
-
 def face_from_vertex(model, vertex_index) :
     """
     Return the faces not deleted with vertex_index as a vertex of the face
+
+    Args:
+        model: Decimate model
+        vertex_index: index of the vertex to extract its faces
+        
+    Returns:
+        liste_face: list of faces' indexes with vertex_index as a vertex
     """
     liste_face = []
     for (face_index, face) in enumerate(model.faces) :
@@ -40,8 +60,25 @@ def face_from_vertex(model, vertex_index) :
 def equal(face, triangle):
     """
     Return True if the indexes of the triangle are the same as the indexes of the vertices of the face
+    
+    Args:
+        face: Face (obja)
+        triangle: list of index of the triangle
+        
+    Returns:
+        True if indexes of vertices in triangle are the same as in face
     """
     return face.a in triangle and face.b in triangle and face.c in triangle
 
 def face_already_exist(model, triangle):
+    """
+    Return True if the triangle already exists in the model
+
+    Args:
+        model: Decimate model
+        triangle: list of index of the triangle
+        
+    Returns:
+        True if any non deleted face of the model have the same vertices as the triangle 
+    """
     return any(equal(f, triangle) for ind,f in enumerate(model.faces) if ind not in model.deleted_faces)
