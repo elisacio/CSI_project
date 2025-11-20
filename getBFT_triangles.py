@@ -2,8 +2,16 @@ import networkx as nx
 
 def getIdFace(faces, side, id_origin):
     """
-    Take as input the faces, two id of vertex and the id of a face
-    Return the face containing the same vertices except one
+    Take as input the faces, two id of vertices and the id of a face
+    Return the face sharing the same vertices
+
+    Args:
+        faces : list of faces
+        side : tuple of two indexes
+        id_origin : integer
+        
+    Returns:
+        i : integer
     """
     for i in range(len(faces)) :
         face = faces[i]
@@ -11,10 +19,16 @@ def getIdFace(faces, side, id_origin):
         if side in sides and i != id_origin :
             return i
 
-def getEdges(faces, dual_vertices):
+def getEdges(faces):
     """
-    Take as input the faces and vertices of a mesh
+    Take as input the faces of a mesh
     Return the new edges of the dual graph
+
+    Args:
+        faces : list of faces
+        
+    Returns:
+        dual_edges : list of tuple of two indexes
     """
     dual_edges = []
     for i in range(len(faces)) :
@@ -35,13 +49,19 @@ def getEdges(faces, dual_vertices):
 
 def getBFT(faces):
     """
+    
     Take as input the faces of a mesh
     Return the breadth first traversal of the triangles
+
+    Args:
+        faces : list of faces
+        
+    Returns:
+        order_triangle : list of indexes
     """
-def getBFT(faces):
 
     dual_vertices = [i for i in range(len(faces))]
-    dual_edges = getEdges(faces, dual_vertices)
+    dual_edges = getEdges(faces)
 
     G = nx.Graph()
     G.add_nodes_from(dual_vertices)

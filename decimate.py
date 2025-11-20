@@ -80,6 +80,7 @@ class Decimater(obja.Model):
             print('Taille faces set after adding new ones: ', len(self.faces))
             print(f"Nombre d'opérations {i} :", len(operations))
 
+
             # Build the binary vector for the coloration encoding
             new_colors = utils.flatten(patches_colors)
             faces_etape_i = [self.faces[face_ind] for face_ind in range(len(self.faces)) if face_ind not in self.deleted_faces]

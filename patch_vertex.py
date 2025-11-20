@@ -18,7 +18,6 @@ def verifier_ferme(couples):
         
     Returns:
         True if the list is closed properly
-
     """
     couples_bis = set(utils.flatten(couples))
     compteur = Counter(utils.flatten(couples))
@@ -26,7 +25,14 @@ def verifier_ferme(couples):
 
 def ordonnement(face_vertices, faces_voisines):
     """
-    Ordonnate the faces
+    Ordonate the vertices within a patch, according to conditions
+
+    Args:
+        face_vertices : list of list of indexes
+        faces_voisines : list of faces
+        
+    Returns:
+        consecutive_list : list of indexes
     """
     couples = [face_vert[1:] for face_vert in face_vertices]
     if not verifier_ferme(couples) or len(couples) <= 2 or len(faces_voisines) <= 4 :
@@ -39,12 +45,25 @@ def ordonnement(face_vertices, faces_voisines):
         couples.remove(couple)
         start = couple[0] if couple[0] != start else couple[1]
         consecutive_list.append(start)
+
     return consecutive_list
 
 def patch_vertex(model, indices_a_supprimer, operations, triangle_couleur):
     """
-    Prend en entrée les indices des vertex à supprimer, prend la liste des opérations de décimations
-    Renvoie la liste des patchs ( la liste des indices dans l'ordre tel que la normale soit dans le bon sens )
+    Take as input the model, the list of vertices to remove, the list of operations and a dictionary of the colors of the triangle
+    Return the set of the new patchs, the colors of these patchs, the formated faces and the completed dictionary
+
+    Args:
+        model : Decimater object
+        indices_a_supprimer : list of index
+        operations : list of operations
+        triangle_couleur : dictionary between index of faces and a color (0 or 1)
+        
+    Returns:
+        patchs : set of N-tuples
+        patches_colors : list of list of colors (0 or 1)
+        formated_faces : list of Faces
+        triangle_couleur : dictionary between index of faces and a color (0 or 1) 
     """
     patchs = set()
     retriangulated_patches = []
@@ -55,47 +74,30 @@ def patch_vertex(model, indices_a_supprimer, operations, triangle_couleur):
 
         faces_voisines = utils.face_from_vertex(model, vertex_index)
         face_vertices = [utils.rotate_until_first([model.faces[face_ind].a, model.faces[face_ind].b, model.faces[face_ind].c], vertex_index) for face_ind in faces_voisines]
-        # face_vertices_set = set(face_vertices)
-        #list_vertex_sorted = ordonnement(face_vertices, faces_voisines, vertex_index)
         list_vertex_sorted = ordonnement(face_vertices, faces_voisines)
-        # print(consecutive_list)
 
         if len(list_vertex_sorted) != 0:
             new_triangles, colors = zigzag_coloration.draw_zigzag(tuple(list_vertex_sorted))
 
             normals = [normal_triangle(model.vertices, triang) for triang in new_triangles]
             has_zero_vector = any(all(x == 0 for x in n) for n in normals)
-            # has_same_face = any(utils.face_already_exist(model, triangle) for triangle in new_triangles)
             while has_zero_vector: # or has_same_face:
-                #print('has zero normal: ', has_zero_vector)
-                # print('has same face: ', has_same_face)
-                # print('old list vertex sorted: ', list_vertex_sorted)
                 list_vertex_sorted.append(list_vertex_sorted.pop(0))
-                # print('new list vertex sorted: ', list_vertex_sorted)
                 new_triangles, colors = zigzag_coloration.draw_zigzag(tuple(list_vertex_sorted))
                 
                 normals = [normal_triangle(model.vertices, triang) for triang in new_triangles]
-                # print('normals', normals)
                 has_zero_vector = any(all(x == 0 for x in v) for v in normals)
-                #print('has zero normal: ', has_zero_vector)
-                # has_same_face = any(utils.face_already_exist(model, triangle) for triangle in new_triangles)
-                # print('has same face: ', has_same_face)
 
             patchs.add(tuple(list_vertex_sorted))
             retriangulated_patches.append(new_triangles)
             patches_colors.append(colors)
             last_index = len(model.faces)
-            #print('initial normal face vertices: ', face_vertices)
-            #print('initial normal vertices set: ', [(i, model.vertices[i]) for i in utils.flatten(face_vertices)])
             initial_normal = mean_normals(model.vertices, face_vertices)
-            #print('initial normal: ', initial_normal)
 
             # build operations
             i = 0
             for triangle in new_triangles:
                 if not utils.face_already_exist(model, triangle):
-                    #print('triangle: ', triangle)
-                    #print('vertices of triangle: ', [model.vertices[i] for i in triangle])
                     f_ind = compare_norm(model.vertices, initial_normal, triangle)
                     f = obja.Face(f_ind[0], f_ind[1], f_ind[2])
                     triangle_couleur[last_index+i] = colors[i]
