@@ -110,7 +110,7 @@ class TestGetStable(unittest.TestCase):
         for i in range(len(result)):
             for j in range(i + 1, len(result)):
                 self.assertFalse(G.has_edge(result[i], result[j]),
-                               f"Les sommets {result[i]} et {result[j]} sont adjacents")
+                               f"The  {result[i]} and {result[j]} vertices are neighbors")
 
     def test_result_type(self):
         model = Decimater()
@@ -159,8 +159,7 @@ class TestGetStable(unittest.TestCase):
         for v in range(len(model.vertices)):
             if v not in result:
                 has_neighbor_in_result = any(G.has_edge(v, r) for r in result)
-                self.assertTrue(has_neighbor_in_result,
-                              f"Le sommet {v} pourrait être ajouté à l'ensemble")
+                self.assertTrue(has_neighbor_in_result)
 
 
 if __name__ == '__main__':
