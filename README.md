@@ -44,7 +44,7 @@ first run the `server.py` file:
 ```
 python3 server.py
 ```
-Then, open a web browser and go to http://localhost:8000/?progressive_model/progressive__cow.obja.
+Then, open a web browser and go to http://localhost:8000/?progressive_models/progressive__cow.obja.
 
 ## Guide for replicating the results
 ### Compression ratio
