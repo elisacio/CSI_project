@@ -58,7 +58,7 @@ the obja files obtained in the benchmarking website http://csi-benchmark.mooo.co
 
 ### Compression ratio per iteration
 The evolution of the compression ratio for a given model can be visualised by running the
-`efficiency_iteration.py` file. This code takes 0 or 2 argument. If none are given, the results
+`efficiency_iteration.py` file. This code takes 0 or 1 argument. If none are given, the results
 for the model 'bunny' will be displayed.
 
 Example:
